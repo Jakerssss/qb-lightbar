@@ -1,4 +1,18 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+if Config.Version == 'new' then
+
+    QBCore = exports['qb-core']:GetCoreObject()
+
+elseif Config.Version == 'old' then
+
+    local QBCore = nil
+    CreateThread(function()
+        while QBCore == nil do
+            TriggerEvent('QBCore:GetObject', function(obj)QBCore = obj end)
+            Wait(200)
+        end
+    end)
+end
+
 local carSpawned = false
 local newVeh = nil
 local inLightbarMenu = false
@@ -29,40 +43,6 @@ function isPolice()
     end
     return false
 end
-
-CreateThread(function()
-    local alreadyEnteredZone = false
-    while true do
-        local wait = 1000
-        local ped = PlayerPedId()
-        local inZone = false
-        local coords = GetEntityCoords(ped)
-        for k, v in pairs(Config["Locations"]) do
-            local dist = #(coords-v["coords"])
-            if dist <= v["radius"] then
-                wait = 5
-                inZone = true
-                if IsControlJustReleased(0, 38) and isPolice() then
-                    TriggerEvent("lightBar")
-                end
-            end
-        end
-        if inZone and not alreadyEnteredZone then
-            alreadyEnteredZone = true
-            if PlayerData.job and isPolice() then
-                TriggerEvent('cd_drawtextui:ShowUI', 'show', Config["Text"])
-            end
-        end
-        if not inZone and alreadyEnteredZone then
-            alreadyEnteredZone = false
-            if PlayerData.job and isPolice() then
-                TriggerEvent('cd_drawtextui:HideUI')
-            end
-        end
-        Wait(wait)
-    end
-end)
-
 
 RegisterCommand("togglelights", function()
     toggleLights()
