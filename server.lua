@@ -1,5 +1,24 @@
+if Config.Version == "new" then
+    QBCore = exports['qb-core']:GetCoreObject()
+
+elseif Config.Version == "old" then
+    local QBCore = nil
+    CreateThread(function()
+        while QBCore == nil do
+            TriggerEvent("QBCore:GetObject", function(obj)QBCore = obj end)
+            Wait(200)
+        end
+    end)
+end
+
 local lightbarCars = {}
 local lightbarCars2 = {}
+
+QBCore.Functions.CreateUseableItem("lightkit", function(source, item)
+    local src = source
+	local Player = QBCore.Functions.GetPlayer(src)
+	TriggerClientEvent('lightBar',source)
+end)
 
 RegisterNetEvent('addLightbar', function(hostVehPlate, lightbarNetworkID, hvp)
 	local source = source
