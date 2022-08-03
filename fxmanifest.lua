@@ -1,7 +1,11 @@
 fx_version 'cerulean'
 game 'gta5'
 
-shared_script 'config.lua'
+shared_scripts {
+    'config.lua',
+    --'@qb-core/import.lua', -- Enable for old qbcores
+} 
+
 server_script 'server.lua'
 client_script 'client.lua'
 
